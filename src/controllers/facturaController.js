@@ -7,13 +7,13 @@ const crearFactura = async (req, res) => {
   try {
     const { cliente, productos } = req.body;
 
-    // Verificar si el cliente existe
+    // 1️⃣ Verificar si el cliente existe
     const clienteExiste = await Cliente.findById(cliente);
     if (!clienteExiste) {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    // Calcular el total de la factura
+    // 2️⃣ Calcular total y actualizar stock
     let total = 0;
 
     for (const item of productos) {
@@ -21,10 +21,21 @@ const crearFactura = async (req, res) => {
       if (!productoDB) {
         return res.status(404).json({ message: `Producto ${item.producto} no encontrado` });
       }
+
+      // Verificar stock disponible
+      if (productoDB.stock < item.cantidad) {
+        return res.status(400).json({
+          message: `No hay suficiente stock de ${productoDB.nombre}. Disponible: ${productoDB.stock}`,
+        });
+      }
+
+      // Calcular subtotal y restar stock
       total += productoDB.precio * item.cantidad;
+      productoDB.stock -= item.cantidad;
+      await productoDB.save(); // Guardar el nuevo stock
     }
 
-    // Crear y guardar la factura
+    // 3️⃣ Crear la factura
     const nuevaFactura = new Factura({
       cliente,
       productos,
@@ -33,10 +44,13 @@ const crearFactura = async (req, res) => {
 
     await nuevaFactura.save();
 
-    res.status(201).json({ message: "Factura creada correctamente", factura: nuevaFactura });
+    res.status(201).json({
+      message: "Factura creada y stock actualizado correctamente",
+      factura: nuevaFactura,
+    });
   } catch (error) {
     console.error("Error al crear factura:", error);
-    res.status(500).json({ message: "Error al crear la factura" });
+    res.status(500).json({ message: "Error al crear la factura", error });
   }
 };
 
