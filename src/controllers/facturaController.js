@@ -66,4 +66,30 @@ const obtenerFacturas = async (req, res) => {
   }
 };
 
-module.exports = { crearFactura, obtenerFacturas };
+// 🔹 Obtener una factura por ID
+const obtenerFacturaPorId = async (req, res) => {
+  try {
+    const factura = await Factura.findById(req.params.id)
+      .populate("cliente")
+      .populate("productos.producto");
+    if (!factura) return res.status(404).json({ message: "Factura no encontrada" });
+    res.json(factura);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener la factura", error });
+  }
+};
+
+// 🔹 Actualizar una factura
+const actualizarFactura = async (req, res) => {
+  try {
+    const factura = await Factura.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!factura) return res.status(404).json({ message: "Factura no encontrada" });
+    res.json({ message: "Factura actualizada correctamente", factura });
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar la factura", error });
+  }
+};
+
+module.exports = { crearFactura, obtenerFacturas, obtenerFacturaPorId, actualizarFactura };
