@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
+import { toast } from "react-toastify";
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -10,7 +11,7 @@ export default function Clientes() {
       const res = await api.get("/clientes");
       setClientes(res.data);
     } catch (error) {
-      console.error("Error al obtener clientes:", error);
+       toast.error("❌ Error al cargar los clientes");
     }
   };
 
@@ -18,10 +19,15 @@ export default function Clientes() {
     if (confirm("¿Seguro que deseas eliminar este cliente?")) {
       try {
         await api.delete(`/clientes/${id}`);
-        alert("Cliente eliminado correctamente ✅");
+        toast.success("🗑️ Cliente eliminado correctamente");
         obtenerClientes(); // recargar lista
       } catch (error) {
         console.error("Error al eliminar cliente:", error);
+        if (error.response?.data?.message) {
+          toast.error(`❌ ${error.response.data.message}`);
+        } else {
+          toast.error("Error al eliminar el cliente ❌");
+        }
       }
     }
   };

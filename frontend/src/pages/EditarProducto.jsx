@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api";
+import { toast } from "react-toastify";
 
 export default function EditarProducto() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ export default function EditarProducto() {
         setProducto(res.data);
       } catch (error) {
         console.error("Error al obtener producto:", error);
+        toast.error("❌ Error al cargar el producto");
       }
     };
     obtenerProducto();
@@ -33,11 +35,16 @@ export default function EditarProducto() {
     e.preventDefault();
     try {
       await api.put(`/productos/${id}`, producto);
-      alert("Producto actualizado correctamente ✅");
+      toast.success("✅ Producto actualizado correctamente");
       navigate("/productos");
     } catch (error) {
       console.error("Error al actualizar producto:", error);
-      alert("Error al actualizar producto ❌");
+      if (error.response?.data?.message) {
+        toast.error(`❌ ${error.response.data.message}`);
+      } else {
+        toast.error("Error al actualizar el producto ❌");
+      }
+      
     }
   };
 

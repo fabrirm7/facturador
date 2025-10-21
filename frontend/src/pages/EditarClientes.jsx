@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api";
+import { toast } from "react-toastify";
 
 export default function EditarCliente() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ export default function EditarCliente() {
         const res = await api.get(`/clientes/${id}`);
         setCliente(res.data);
       } catch (error) {
-        console.error("Error al obtener cliente:", error);
+        toast.error("❌ Error al cargar el cliente");
       }
     };
     obtenerCliente();
@@ -33,11 +34,17 @@ export default function EditarCliente() {
     e.preventDefault();
     try {
       await api.put(`/clientes/${id}`, cliente);
-      alert("Cliente actualizado correctamente ✅");
+      toast.success("✅ Cliente actualizado correctamente");
       navigate("/clientes");
     } catch (error) {
       console.error("Error al actualizar cliente:", error);
-      alert("Error al actualizar cliente ❌");
+      if (error.response?.data?.message) {
+        toast.error(`❌ ${error.response.data.message}`);
+
+      } else {
+        toast.error("Error al actualizar el cliente ❌");
+      }
+      
     }
   };
 

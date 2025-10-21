@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../api";
+import { toast } from "react-toastify";
+
 
 export default function EditarFactura() {
   const { id } = useParams();
@@ -11,10 +13,19 @@ export default function EditarFactura() {
   const [factura, setFactura] = useState({
     cliente: "",
     productos: [],
-    total: 0,
   });
+  const [total, setTotal] = useState(0);
 
-  // 🔹 Cargar datos iniciales
+  // 🧠 Calcular total localmente
+  const calcularTotal = (listaProductos) => {
+    let totalTemp = 0;
+    for (const item of listaProductos) {
+      const info = productos.find((p) => p._id === item.producto);
+      if (info) totalTemp += info.precio * item.cantidad;
+    }
+    setTotal(totalTemp);
+  };
+
   useEffect(() => {
     const cargar = async () => {
       try {
@@ -27,20 +38,17 @@ export default function EditarFactura() {
         setClientes(resClientes.data);
         setProductos(resProductos.data);
 
-        // Calcular total inicial
-        let total = 0;
-        resFactura.data.productos.forEach((p) => {
-          total += p.cantidad * p.producto.precio;
-        });
+        const productosFactura = resFactura.data.productos.map((p) => ({
+          producto: p.producto._id,
+          cantidad: p.cantidad,
+        }));
 
         setFactura({
           cliente: resFactura.data.cliente?._id || "",
-          productos: resFactura.data.productos.map((p) => ({
-            producto: p.producto._id,
-            cantidad: p.cantidad,
-          })),
-          total,
+          productos: productosFactura,
         });
+
+        calcularTotal(productosFactura);
       } catch (err) {
         console.error("Error al obtener datos:", err);
         alert("No se pudo cargar la factura.");
@@ -49,49 +57,36 @@ export default function EditarFactura() {
     cargar();
   }, [id]);
 
-  // 🔹 Cambiar cliente
   const handleCliente = (e) => {
     setFactura({ ...factura, cliente: e.target.value });
   };
 
-  // 🔹 Cambiar cantidad y recalcular total
   const handleCantidad = (idx, val) => {
     const nuevos = [...factura.productos];
     nuevos[idx].cantidad = Number(val) || 1;
-
-    // Recalcular total
-    let nuevoTotal = 0;
-    nuevos.forEach((item) => {
-      const info = productos.find((p) => p._id === item.producto);
-      if (info) nuevoTotal += info.precio * item.cantidad;
-    });
-
-    setFactura({ ...factura, productos: nuevos, total: nuevoTotal });
+    setFactura({ ...factura, productos: nuevos });
+    calcularTotal(nuevos);
   };
 
-  // 🔹 Guardar cambios y actualizar stock en backend
+  const eliminarProducto = (idx) => {
+    const nuevos = factura.productos.filter((_, i) => i !== idx);
+    setFactura({ ...factura, productos: nuevos });
+    calcularTotal(nuevos);
+  };
+
   const guardar = async (e) => {
     e.preventDefault();
     try {
-      // 1️⃣ Actualizar la factura
       await api.put(`/facturas/${id}`, factura);
-
-      // 2️⃣ Actualizar el stock en backend según las nuevas cantidades
-      for (const item of factura.productos) {
-        const producto = productos.find((p) => p._id === item.producto);
-        if (producto) {
-          await api.put(`/productos/${item.producto}`, {
-            ...producto,
-            stock: producto.stock - item.cantidad,
-          });
-        }
-      }
-
-      alert("Factura y stock actualizados correctamente ✅");
+      toast.success("Factura actualizada correctamente");
       navigate("/facturas");
     } catch (err) {
       console.error("Error al actualizar:", err);
-      alert("No se pudo actualizar la factura ❌");
+      if (err.response?.data?.message){
+        toast.error(` ${err.response.data.message}`);
+      } else {
+        toast.error("Error al actualizar la factura");
+      }
     }
   };
 
@@ -136,15 +131,27 @@ export default function EditarFactura() {
                   onChange={(e) => handleCantidad(i, e.target.value)}
                   style={{ width: 80 }}
                 />
+                <span>${info ? info.precio * item.cantidad : 0}</span>
+                <button
+                  type="button"
+                  onClick={() => eliminarProducto(i)}
+                  style={{
+                    background: "red",
+                    color: "white",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: 4,
+                    padding: "4px 8px",
+                  }}
+                >
+                  🗑️ Eliminar
+                </button>
               </div>
             );
           })
         )}
 
-        {/* Mostrar total actualizado */}
-        <h4 style={{ marginTop: 20 }}>
-          Total: <span style={{ color: "green" }}>${factura.total.toFixed(2)}</span>
-        </h4>
+        <h3 style={{ marginTop: 16 }}>Total: ${total.toLocaleString()}</h3>
 
         <button
           type="submit"

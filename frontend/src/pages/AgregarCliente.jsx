@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../api";
+import { toast } from "react-toastify"; // ✅ importamos toastify
 
 export default function AgregarCliente() {
   const [cliente, setCliente] = useState({
@@ -18,11 +19,15 @@ export default function AgregarCliente() {
     e.preventDefault();
     try {
       await api.post("/clientes", cliente);
-      alert("Cliente agregado correctamente ✅");
+      toast.success("Cliente agregado correctamente "); // ✅ mensaje de éxito
       setCliente({ nombre: "", cuit: "", email: "", telefono: "", direccion: "" });
     } catch (error) {
       console.error("Error al agregar cliente:", error);
-      alert("Hubo un error al agregar el cliente ❌");
+      if (error.response?.data?.message) {
+        toast.error(`❌ ${error.response.data.message}`); // mensaje del backend
+      } else {
+        toast.error("Hubo un error al agregar el cliente ❌"); // error genérico
+      }
     }
   };
 

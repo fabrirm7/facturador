@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api";
+import { toast } from "react-toastify"; // ✅ Importamos Toastify
 
 export default function NuevaFactura() {
   const [clientes, setClientes] = useState([]);
@@ -20,6 +21,7 @@ export default function NuevaFactura() {
         setProductos(resProductos.data);
       } catch (error) {
         console.error("Error cargando datos:", error);
+        toast.error("❌ Error al cargar clientes o productos");
       }
     };
     fetchData();
@@ -28,7 +30,10 @@ export default function NuevaFactura() {
   // Agregar un producto a la factura
   const agregarProducto = (idProducto) => {
     const existe = factura.productos.find((p) => p.producto === idProducto);
-    if (existe) return alert("Este producto ya fue agregado");
+    if (existe) {
+      toast.warning("⚠️ Este producto ya fue agregado");
+      return;
+    }
     setFactura({
       ...factura,
       productos: [...factura.productos, { producto: idProducto, cantidad: 1 }],
@@ -47,6 +52,7 @@ export default function NuevaFactura() {
   const eliminarProducto = (idProducto) => {
     const nuevos = factura.productos.filter((p) => p.producto !== idProducto);
     setFactura({ ...factura, productos: nuevos });
+    toast.info("🗑️ Producto eliminado de la factura");
   };
 
   // Calcular total cada vez que cambian los productos
@@ -63,12 +69,16 @@ export default function NuevaFactura() {
     e.preventDefault();
     try {
       await api.post("/facturas", factura);
-      alert("Factura creada correctamente ✅");
+      toast.success("✅ Factura creada correctamente");
       setFactura({ cliente: "", productos: [] });
       setTotal(0);
     } catch (error) {
       console.error("Error al crear factura:", error);
-      alert("Error al crear factura ❌");
+      if (error.response?.data?.message) {
+        toast.error(`❌ ${error.response.data.message}`);
+      } else {
+        toast.error("Error al crear la factura ❌");
+      }
     }
   };
 
@@ -76,7 +86,15 @@ export default function NuevaFactura() {
     <div style={{ padding: "20px" }}>
       <h2>Nueva Factura</h2>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "600px" }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          maxWidth: "600px",
+        }}
+      >
         {/* Selección de cliente */}
         <select
           value={factura.cliente}
@@ -97,7 +115,11 @@ export default function NuevaFactura() {
           {productos.map((p) => (
             <li key={p._id}>
               {p.nombre} - ${p.precio} ({p.stock} disponibles)
-              <button type="button" onClick={() => agregarProducto(p._id)} style={{ marginLeft: "10px" }}>
+              <button
+                type="button"
+                onClick={() => agregarProducto(p._id)}
+                style={{ marginLeft: "10px" }}
+              >
                 ➕ Agregar
               </button>
             </li>
@@ -119,10 +141,16 @@ export default function NuevaFactura() {
                   min="1"
                   max={prod?.stock}
                   value={p.cantidad}
-                  onChange={(e) => cambiarCantidad(p.producto, e.target.value)}
+                  onChange={(e) =>
+                    cambiarCantidad(p.producto, e.target.value)
+                  }
                   style={{ marginLeft: "10px", width: "60px" }}
                 />
-                <button type="button" onClick={() => eliminarProducto(p.producto)} style={{ marginLeft: "10px" }}>
+                <button
+                  type="button"
+                  onClick={() => eliminarProducto(p.producto)}
+                  style={{ marginLeft: "10px" }}
+                >
                   ❌ Quitar
                 </button>
               </div>
@@ -132,7 +160,16 @@ export default function NuevaFactura() {
 
         <h3>Total: ${total}</h3>
 
-        <button type="submit" style={{ background: "#282c34", color: "white", padding: "10px", border: "none", cursor: "pointer" }}>
+        <button
+          type="submit"
+          style={{
+            background: "#282c34",
+            color: "white",
+            padding: "10px",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
           Guardar Factura
         </button>
       </form>

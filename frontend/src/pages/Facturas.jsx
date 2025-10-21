@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
+import { toast } from "react-toastify";
 
 export default function Facturas() {
   const [facturas, setFacturas] = useState([]);
@@ -11,6 +12,23 @@ export default function Facturas() {
       setFacturas(res.data);
     } catch (error) {
       console.error("Error al obtener facturas:", error);
+      toast.error("Error al obtener facturas ❌");
+    }
+  };
+
+  const anularFactura = async (id) => {
+    if (confirm("¿Seguro que deseas anular esta factura?")) {
+      try {
+        await api.put(`/facturas/${id}/anular`);
+        toast.info("Factura anulada correctamente ✅");
+        obtenerFacturas();
+      } catch (err) {
+        if (err.response?.data?.message) {
+          toast.error(`❌ ${err.response.data.message}`);
+        } else {
+          toast.error("Error al anular la factura ❌");
+        }
+      }
     }
   };
 
@@ -81,6 +99,20 @@ export default function Facturas() {
                   >
                     ✏️ Editar
                   </Link>
+
+                  <button
+                    onClick={() => anularFactura(f._id)}
+                    style={{
+                      background: "#ff9800",
+                      color: "white",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "5px 8px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    🚫 Anular
+                  </button>
                 </td>
               </tr>
             ))}

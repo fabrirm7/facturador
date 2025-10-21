@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { api } from "../api";
-
+import { toast } from "react-toastify"; // ✅ importamos toastif
 export default function AgregarProducto() {
   const [producto, setProducto] = useState({
     nombre: "",
@@ -18,11 +18,15 @@ export default function AgregarProducto() {
     e.preventDefault();
     try {
       await api.post("/productos", producto);
-      alert("Producto agregado correctamente ✅");
+      toast.success("Producto agregado correctamente ");
       setProducto({ nombre: "", descripcion: "", precio: "", stock: "", categoria: "" });
     } catch (error) {
       console.error("Error al agregar producto:", error);
-      alert("Hubo un error al agregar el producto ❌");
+      if (error.response?.data?.message) {
+        toast.error(`❌ ${error.response.data.message}`);
+      } else {
+        toast.error("Hubo un error al agregar el producto ❌");
+      }
     }
   };
 
