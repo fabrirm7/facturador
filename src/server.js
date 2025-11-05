@@ -1,9 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config();
 const bodyParser = require("body-parser");
 
 const app = express(); // 🔹 solo una instancia
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // permite solo tu frontend
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 // Middlewares
 app.use(express.json());

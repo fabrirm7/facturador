@@ -28,6 +28,11 @@ const facturaSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  estado: {
+    type: String,
+    enum: ["activa", "anulada"], // agregacion para anular factura
+    default: "activa",
+  },
 });
 
 module.exports = mongoose.model("Factura", facturaSchema);
