@@ -5,6 +5,7 @@ export default function AgregarProducto() {
   const [producto, setProducto] = useState({
     nombre: "",
     descripcion: "",
+    codigo: "",
     precio: "",
     stock: "",
     categoria: "",
@@ -35,6 +36,8 @@ export default function AgregarProducto() {
       <h2>Agregar Producto</h2>
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "400px" }}>
         <input type="text" name="nombre" placeholder="Nombre" value={producto.nombre} onChange={handleChange} required />
+        <input type="text"name="codigo"placeholder="Código / Código de barras"value={producto.codigo}onChange={handleChange}required/>
+
         <input type="text" name="descripcion" placeholder="Descripción" value={producto.descripcion} onChange={handleChange} />
         <input type="number" name="precio" placeholder="Precio" value={producto.precio} onChange={handleChange} required />
         <input type="number" name="stock" placeholder="Stock" value={producto.stock} onChange={handleChange} required />

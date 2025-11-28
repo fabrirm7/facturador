@@ -9,6 +9,7 @@ import AgregarProducto from "./pages/AgregarProducto";
 import NuevaFactura from "./pages/NuevaFactura";
 import Facturas from "./pages/Facturas";
 import EditarFactura from "./pages/EditarFactura";
+import Caja from "./pages/Caja";
 
 
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/facturas" element={<Facturas />} />
         <Route path="/facturas/nueva" element={<NuevaFactura />} />
         <Route path="/facturas/editar/:id" element={<EditarFactura />} />
+        <Route path="/caja" element={<Caja />} />
 
 
         
