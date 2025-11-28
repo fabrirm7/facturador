@@ -11,10 +11,16 @@ const productoSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    codigo: {
+      type: String,
+      required: true,   // 👈 obligatorio
+      unique: true,     // 👈 no repetido
+      trim: true,
+    },
     precio: {
       type: Number,
       required: true,
-      min: 0, // no permite precios negativos
+      min: 0,
     },
     stock: {
       type: Number,
@@ -27,7 +33,7 @@ const productoSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // agrega createdAt y updatedAt automáticamente
+    timestamps: true,
   }
 );
 

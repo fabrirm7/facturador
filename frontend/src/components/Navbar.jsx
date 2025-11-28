@@ -5,7 +5,8 @@ export default function Navbar() {
     <nav style={{ background: "#282c34", padding: "10px" }}>
       <Link to="/clientes" style={{ color: "white", marginRight: "20px" }}>Clientes</Link>
       <Link to="/productos" style={{ color: "white", marginRight: "20px" }}>Productos</Link>
-      <Link to="/facturas" style={{ color: "white" }}>Facturas</Link>
+      <Link to="/facturas" style={{ color: "white", marginRight: "20px" }}>Facturas</Link>
+      <Link to="/caja" style={{ color: "white" }}>Caja</Link>
     </nav>
   );
 }

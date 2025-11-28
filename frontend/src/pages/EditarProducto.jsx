@@ -9,6 +9,7 @@ export default function EditarProducto() {
   const [producto, setProducto] = useState({
     nombre: "",
     descripcion: "",
+    codigo: "",
     precio: "",
     stock: "",
     categoria: "",
@@ -54,6 +55,7 @@ export default function EditarProducto() {
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "400px" }}>
         <input type="text" name="nombre" value={producto.nombre} onChange={handleChange} placeholder="Nombre" required />
         <input type="text" name="descripcion" value={producto.descripcion} onChange={handleChange} placeholder="Descripción" />
+        <input type="text"name="codigo"value={producto.codigo}onChange={handleChange}placeholder="Código / Código de barras"required/>
         <input type="number" name="precio" value={producto.precio} onChange={handleChange} placeholder="Precio" required />
         <input type="number" name="stock" value={producto.stock} onChange={handleChange} placeholder="Stock" required />
         <input type="text" name="categoria" value={producto.categoria} onChange={handleChange} placeholder="Categoría" />
