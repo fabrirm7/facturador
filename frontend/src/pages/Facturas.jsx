@@ -1,3 +1,5 @@
+// src/pages/Facturas.jsx
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
@@ -72,20 +74,27 @@ export default function Facturas() {
               <th style={{ padding: "10px", textAlign: "left" }}>Cliente</th>
               <th style={{ padding: "10px", textAlign: "center" }}>Fecha</th>
               <th style={{ padding: "10px", textAlign: "right" }}>Total</th>
+              <th style={{ padding: "10px", textAlign: "center" }}>Estado</th>
               <th style={{ padding: "10px", textAlign: "center" }}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {facturas.map((f) => (
               <tr key={f._id} style={{ borderBottom: "1px solid #ddd" }}>
-                <td style={{ padding: "10px" }}>{f.cliente?.nombre || "Sin nombre"}</td>
+                <td style={{ padding: "10px" }}>
+                  {f.cliente?.nombre || "Sin nombre"}
+                </td>
                 <td style={{ padding: "10px", textAlign: "center" }}>
                   {new Date(f.fecha).toLocaleDateString()}
                 </td>
                 <td style={{ padding: "10px", textAlign: "right" }}>
                   ${f.total.toLocaleString()}
                 </td>
+                <td style={{ padding: "10px", textAlign: "center" }}>
+                  {f.estado === "anulada" ? "🚫 Anulada" : "✅ Activa"}
+                </td>
                 <td style={{ textAlign: "center" }}>
+                  {/* Botón EDITAR */}
                   <Link
                     to={`/facturas/editar/${f._id}`}
                     style={{
@@ -100,6 +109,24 @@ export default function Facturas() {
                     ✏️ Editar
                   </Link>
 
+                  {/* Botón TICKET (reimpresión / vista) */}
+                  <Link
+                    to={`/facturas/ticket/${f._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      background: "#007bff",
+                      color: "white",
+                      padding: "5px 8px",
+                      borderRadius: "4px",
+                      textDecoration: "none",
+                      marginRight: "5px",
+                    }}
+                  >
+                    🧾 Ticket
+                  </Link>
+
+                  {/* Botón ANULAR */}
                   <button
                     onClick={() => anularFactura(f._id)}
                     style={{

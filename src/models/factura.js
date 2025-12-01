@@ -8,15 +8,27 @@ const facturaSchema = new mongoose.Schema({
   },
   productos: [
     {
+      // Si es producto del catálogo
       producto: {
         type: mongoose.Schema.Types.ObjectId, // referencia a producto
         ref: "Producto",
-        required: true,
       },
       cantidad: {
         type: Number,
         required: true,
         min: 1,
+      },
+
+      // Campos extra para soportar ítems manuales
+      descripcion: {
+        type: String, // nombre del item
+      },
+      precioUnitario: {
+        type: Number, // precio unitario al momento de la venta
+      },
+      esManual: {
+        type: Boolean,
+        default: false,
       },
     },
   ],

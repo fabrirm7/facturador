@@ -13,12 +13,42 @@ const crearFactura = async (req, res) => {
       return res.status(404).json({ message: "Cliente no encontrado" });
     }
 
-    // 2️⃣ Calcular total y actualizar stock
     let total = 0;
+    const productosFactura = [];
+
+    // 2️⃣ Recorrer items enviados
     for (const item of productos) {
+      // 👉 Caso 1: ÍTEM MANUAL (sin producto de catálogo)
+      if (item.esManual) {
+        const descripcion = item.descripcion?.trim();
+        const precioUnitario = Number(item.precioUnitario);
+
+        if (!descripcion || isNaN(precioUnitario) || precioUnitario < 0) {
+          return res.status(400).json({
+            message:
+              "Datos inválidos en producto manual (descripcion / precioUnitario).",
+          });
+        }
+
+        total += precioUnitario * item.cantidad;
+
+        productosFactura.push({
+          producto: null,
+          cantidad: item.cantidad,
+          descripcion,
+          precioUnitario,
+          esManual: true,
+        });
+
+        continue;
+      }
+
+      // 👉 Caso 2: Producto normal del catálogo
       const productoDB = await Producto.findById(item.producto);
       if (!productoDB) {
-        return res.status(404).json({ message: `Producto ${item.producto} no encontrado` });
+        return res
+          .status(404)
+          .json({ message: `Producto ${item.producto} no encontrado` });
       }
 
       // 🚫 Validar cantidad y stock disponible
@@ -35,15 +65,24 @@ const crearFactura = async (req, res) => {
       }
 
       // ✅ Descontar stock y calcular subtotal
-      total += productoDB.precio * item.cantidad;
+      const subtotal = productoDB.precio * item.cantidad;
+      total += subtotal;
       productoDB.stock -= item.cantidad;
       await productoDB.save();
+
+      productosFactura.push({
+        producto: productoDB._id,
+        cantidad: item.cantidad,
+        descripcion: productoDB.nombre,
+        precioUnitario: productoDB.precio,
+        esManual: false,
+      });
     }
 
     // 3️⃣ Crear la factura
     const nuevaFactura = new Factura({
       cliente,
-      productos,
+      productos: productosFactura,
       total,
     });
 
@@ -91,13 +130,17 @@ const actualizarFactura = async (req, res) => {
     const facturaId = req.params.id;
 
     // 1️⃣ Buscar la factura original
-    const facturaOriginal = await Factura.findById(facturaId).populate("productos.producto");
+    const facturaOriginal = await Factura.findById(facturaId).populate(
+      "productos.producto"
+    );
     if (!facturaOriginal) {
       return res.status(404).json({ message: "Factura no encontrada" });
     }
 
-    // 2️⃣ Devolver stock de los productos originales
+    // 2️⃣ Devolver stock de los productos originales (solo los que NO son manuales)
     for (const item of facturaOriginal.productos) {
+      if (!item.producto) continue; // manual, no toca stock
+
       const productoDB = await Producto.findById(item.producto._id);
       if (productoDB) {
         productoDB.stock += item.cantidad; // devolvemos stock anterior
@@ -107,13 +150,42 @@ const actualizarFactura = async (req, res) => {
 
     // 3️⃣ Calcular nuevo total y ajustar stock
     let nuevoTotal = 0;
+    const productosFactura = [];
+
     for (const item of productos) {
-      const productoDB = await Producto.findById(item.producto);
-      if (!productoDB) {
-        return res.status(404).json({ message: `Producto ${item.producto} no encontrado` });
+      // Ítem manual
+      if (item.esManual) {
+        const descripcion = item.descripcion?.trim();
+        const precioUnitario = Number(item.precioUnitario);
+
+        if (!descripcion || isNaN(precioUnitario) || precioUnitario < 0) {
+          return res.status(400).json({
+            message:
+              "Datos inválidos en producto manual (descripcion / precioUnitario).",
+          });
+        }
+
+        nuevoTotal += precioUnitario * item.cantidad;
+
+        productosFactura.push({
+          producto: null,
+          cantidad: item.cantidad,
+          descripcion,
+          precioUnitario,
+          esManual: true,
+        });
+
+        continue;
       }
 
-      // 🚫 Validar cantidad y stock
+      // Producto normal
+      const productoDB = await Producto.findById(item.producto);
+      if (!productoDB) {
+        return res
+          .status(404)
+          .json({ message: `Producto ${item.producto} no encontrado` });
+      }
+
       if (item.cantidad <= 0) {
         return res.status(400).json({
           message: `La cantidad del producto ${productoDB.nombre} debe ser mayor que 0.`,
@@ -129,12 +201,20 @@ const actualizarFactura = async (req, res) => {
       nuevoTotal += productoDB.precio * item.cantidad;
       productoDB.stock -= item.cantidad;
       await productoDB.save();
+
+      productosFactura.push({
+        producto: productoDB._id,
+        cantidad: item.cantidad,
+        descripcion: productoDB.nombre,
+        precioUnitario: productoDB.precio,
+        esManual: false,
+      });
     }
 
     // 4️⃣ Actualizar factura
     const facturaActualizada = await Factura.findByIdAndUpdate(
       facturaId,
-      { cliente, productos, total: nuevoTotal },
+      { cliente, productos: productosFactura, total: nuevoTotal },
       { new: true }
     );
 
@@ -151,7 +231,9 @@ const actualizarFactura = async (req, res) => {
 // 🔄 Anular una factura y devolver stock
 const anularFactura = async (req, res) => {
   try {
-    const factura = await Factura.findById(req.params.id).populate("productos.producto");
+    const factura = await Factura.findById(req.params.id).populate(
+      "productos.producto"
+    );
     if (!factura) {
       return res.status(404).json({ message: "Factura no encontrada" });
     }
@@ -160,8 +242,10 @@ const anularFactura = async (req, res) => {
       return res.status(400).json({ message: "La factura ya está anulada." });
     }
 
-    // Devolver el stock de los productos
+    // Devolver el stock de los productos (solo los que no son manuales)
     for (const item of factura.productos) {
+      if (!item.producto) continue;
+
       const productoDB = await Producto.findById(item.producto._id);
       if (productoDB) {
         productoDB.stock += item.cantidad;
@@ -179,4 +263,10 @@ const anularFactura = async (req, res) => {
   }
 };
 
-module.exports = { crearFactura, obtenerFacturas, obtenerFacturaPorId, actualizarFactura, anularFactura };
+module.exports = {
+  crearFactura,
+  obtenerFacturas,
+  obtenerFacturaPorId,
+  actualizarFactura,
+  anularFactura,
+};
