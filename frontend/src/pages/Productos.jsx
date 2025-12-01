@@ -65,6 +65,7 @@ export default function Productos() {
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>Código</th>
               <th>Precio</th>
               <th>Stock</th>
               <th>Categoría</th>
@@ -75,6 +76,7 @@ export default function Productos() {
             {productos.map((p) => (
               <tr key={p._id}>
                 <td>{p.nombre}</td>
+                <td>{p.codigo}</td>
                 <td>${p.precio}</td>
                 <td>{p.stock}</td>
                 <td>{p.categoria}</td>

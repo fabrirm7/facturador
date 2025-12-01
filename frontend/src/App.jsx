@@ -10,9 +10,9 @@ import NuevaFactura from "./pages/NuevaFactura";
 import Facturas from "./pages/Facturas";
 import EditarFactura from "./pages/EditarFactura";
 import Caja from "./pages/Caja";
-
-
-
+import TicketFactura from "./pages/TicketFactura";
+import CajaDiaria from "./pages/CajaDiaria";
+import HistorialCaja from "./pages/HistorialCaja"; // 👈 NUEVO
 
 function App() {
   return (
@@ -29,10 +29,12 @@ function App() {
         <Route path="/facturas" element={<Facturas />} />
         <Route path="/facturas/nueva" element={<NuevaFactura />} />
         <Route path="/facturas/editar/:id" element={<EditarFactura />} />
+
         <Route path="/caja" element={<Caja />} />
+        <Route path="/facturas/ticket/:id" element={<TicketFactura />} />
 
-
-        
+        <Route path="/caja-diaria" element={<CajaDiaria />} />
+        <Route path="/caja-diaria/historial" element={<HistorialCaja />} />
       </Routes>
     </Router>
   );

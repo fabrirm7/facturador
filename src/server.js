@@ -35,12 +35,16 @@ app.get("/api/ping", (req, res) => {
 const clienteRoutes = require("./routes/clienteRoutes");
 const productoRoutes = require("./routes/productoRoutes");
 const facturaRoutes = require("./routes/facturaRoutes");
+const cajaRoutes = require("./routes/cajaRoutes");
+
 
 
 // Usamos las rutas
 app.use("/api/clientes", clienteRoutes);
 app.use("/api/productos", productoRoutes);
 app.use("/api/facturas", facturaRoutes);
+app.use("/api/caja", cajaRoutes);
+
 
 // Iniciar servidor
 const port = process.env.PORT || 5000;
