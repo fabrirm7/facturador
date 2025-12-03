@@ -12,7 +12,10 @@ import EditarFactura from "./pages/EditarFactura";
 import Caja from "./pages/Caja";
 import TicketFactura from "./pages/TicketFactura";
 import CajaDiaria from "./pages/CajaDiaria";
-import HistorialCaja from "./pages/HistorialCaja"; // 👈 NUEVO
+import HistorialCaja from "./pages/HistorialCaja";
+import ConfiguracionNegocio from "./pages/ConfiguracionNegocio"; // 👈 NUEVO
+import Reportes from "./pages/Reportes";
+
 
 function App() {
   return (
@@ -35,6 +38,11 @@ function App() {
 
         <Route path="/caja-diaria" element={<CajaDiaria />} />
         <Route path="/caja-diaria/historial" element={<HistorialCaja />} />
+
+        {/* Configuración del negocio */}
+        <Route path="/configuracion" element={<ConfiguracionNegocio />} />
+        <Route path="/reportes" element={<Reportes />} />
+
       </Routes>
     </Router>
   );

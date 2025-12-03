@@ -8,6 +8,8 @@ export default function Navbar() {
       <Link to="/facturas" style={{ color: "white", marginRight: "20px" }}>Facturas</Link>
       <Link to="/caja" style={{ color: "white", marginRight: "20px" }}>Caja</Link>
       <Link to="/caja-diaria" style={{ color: "white", marginRight: "20px" }}>Caja diaria</Link>
+      <Link to="/reportes" style={{ color: "white", marginRight: "20px" }}>Reportes</Link>
+      <Link to="/configuracion" style={{ color: "white" }}>Configuración</Link>
     </nav>
   );
 }

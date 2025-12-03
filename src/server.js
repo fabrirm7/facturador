@@ -36,6 +36,10 @@ const clienteRoutes = require("./routes/clienteRoutes");
 const productoRoutes = require("./routes/productoRoutes");
 const facturaRoutes = require("./routes/facturaRoutes");
 const cajaRoutes = require("./routes/cajaRoutes");
+const configuracionRoutes = require("./routes/configuracionRoutes");
+const reportesRoutes = require("./routes/reportesRoutes");
+
+
 
 
 
@@ -44,6 +48,12 @@ app.use("/api/clientes", clienteRoutes);
 app.use("/api/productos", productoRoutes);
 app.use("/api/facturas", facturaRoutes);
 app.use("/api/caja", cajaRoutes);
+app.use("/api/configuracion", configuracionRoutes);
+app.use("/api/reportes", reportesRoutes);
+
+
+
+
 
 
 // Iniciar servidor
