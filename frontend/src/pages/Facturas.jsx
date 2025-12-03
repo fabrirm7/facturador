@@ -7,30 +7,33 @@ import { toast } from "react-toastify";
 
 export default function Facturas() {
   const [facturas, setFacturas] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   const obtenerFacturas = async () => {
     try {
+      setCargando(true);
       const res = await api.get("/facturas");
-      setFacturas(res.data);
+      setFacturas(res.data || []);
     } catch (error) {
       console.error("Error al obtener facturas:", error);
-      toast.error("Error al obtener facturas ❌");
+      toast.error("❌ Error al obtener facturas");
+    } finally {
+      setCargando(false);
     }
   };
 
   const anularFactura = async (id) => {
-    if (confirm("¿Seguro que deseas anular esta factura?")) {
-      try {
-        await api.put(`/facturas/${id}/anular`);
-        toast.info("Factura anulada correctamente ✅");
-        obtenerFacturas();
-      } catch (err) {
-        if (err.response?.data?.message) {
-          toast.error(`❌ ${err.response.data.message}`);
-        } else {
-          toast.error("Error al anular la factura ❌");
-        }
-      }
+    if (!confirm("¿Seguro que deseas anular esta factura?")) return;
+
+    try {
+      const res = await api.put(`/facturas/${id}/anular`);
+
+      toast.info(res.data?.message || "Factura anulada correctamente ✅");
+      obtenerFacturas();
+    } catch (err) {
+      const msg =
+        err.response?.data?.message || "❌ Error al anular la factura";
+      toast.error(msg);
     }
   };
 
@@ -41,6 +44,7 @@ export default function Facturas() {
   return (
     <div style={{ padding: "20px" }}>
       <h2>Listado de Facturas</h2>
+
       <Link
         to="/facturas/nueva"
         style={{
@@ -56,7 +60,9 @@ export default function Facturas() {
         ➕ Nueva Factura
       </Link>
 
-      {facturas.length === 0 ? (
+      {cargando ? (
+        <p>Cargando facturas...</p>
+      ) : facturas.length === 0 ? (
         <p>No hay facturas registradas.</p>
       ) : (
         <table
@@ -85,14 +91,15 @@ export default function Facturas() {
                   {f.cliente?.nombre || "Sin nombre"}
                 </td>
                 <td style={{ padding: "10px", textAlign: "center" }}>
-                  {new Date(f.fecha).toLocaleDateString()}
+                  {f.fecha ? new Date(f.fecha).toLocaleDateString() : "-"}
                 </td>
                 <td style={{ padding: "10px", textAlign: "right" }}>
-                  ${f.total.toLocaleString()}
+                  ${f.total?.toLocaleString() || "0"}
                 </td>
                 <td style={{ padding: "10px", textAlign: "center" }}>
                   {f.estado === "anulada" ? "🚫 Anulada" : "✅ Activa"}
                 </td>
+
                 <td style={{ textAlign: "center" }}>
                   {/* Botón EDITAR */}
                   <Link
@@ -109,7 +116,7 @@ export default function Facturas() {
                     ✏️ Editar
                   </Link>
 
-                  {/* Botón TICKET (reimpresión / vista) */}
+                  {/* Botón TICKET */}
                   <Link
                     to={`/facturas/ticket/${f._id}`}
                     target="_blank"
@@ -149,3 +156,4 @@ export default function Facturas() {
     </div>
   );
 }
+
