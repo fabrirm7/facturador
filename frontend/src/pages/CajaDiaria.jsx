@@ -166,12 +166,11 @@ export default function CajaDiaria() {
             <strong>Monto inicial:</strong> ${caja.montoInicial.toFixed(2)}
           </p>
           <p>
-            <strong>Total ventas (facturas activas):</strong>{" "}
-            ${totalVentas.toFixed(2)}
+            <strong>Total ventas (facturas activas):</strong> $
+            {totalVentas.toFixed(2)}
           </p>
           <p>
-            <strong>Total esperado en caja:</strong>{" "}
-            ${totalEsperado.toFixed(2)}
+            <strong>Total esperado en caja:</strong> ${totalEsperado.toFixed(2)}
           </p>
 
           <hr />
@@ -225,6 +224,19 @@ export default function CajaDiaria() {
           </form>
         </div>
       )}
+      {/* FOOTER */}
+      <footer
+        style={{
+          marginTop: "80px",
+          padding: "20px",
+          textAlign: "center",
+          color: "#888",
+          fontSize: "14px",
+          borderTop: "1px solid #ddd",
+        }}
+      >
+        © Novasoft - Todos los derechos reservados 2025
+      </footer>
     </div>
   );
 }

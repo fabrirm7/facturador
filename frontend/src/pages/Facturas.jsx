@@ -153,6 +153,19 @@ export default function Facturas() {
           </tbody>
         </table>
       )}
+            {/* FOOTER */}
+      <footer
+        style={{
+          marginTop: "80px",
+          padding: "20px",
+          textAlign: "center",
+          color: "#888",
+          fontSize: "14px",
+          borderTop: "1px solid #ddd",
+        }}
+      >
+        © Novasoft - Todos los derechos reservados 2025
+      </footer>
     </div>
   );
 }

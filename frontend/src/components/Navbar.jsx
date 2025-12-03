@@ -1,54 +1,69 @@
 import { Link } from "react-router-dom";
+import { FaUsers, FaBoxOpen, FaFileInvoice, FaCashRegister, FaCalendarDay } from "react-icons/fa";
 
 export default function Navbar() {
+  const navItems = [
+    { to: "/clientes", label: "Clientes", icon: <FaUsers /> },
+    { to: "/productos", label: "Productos", icon: <FaBoxOpen /> },
+    { to: "/facturas", label: "Facturas", icon: <FaFileInvoice /> },
+    { to: "/caja", label: "Caja", icon: <FaCashRegister /> },
+    { to: "/caja-diaria", label: "Caja diaria", icon: <FaCalendarDay /> },
+  ];
+
   return (
     <nav
       style={{
         background: "#1f2937",
         padding: "15px 25px",
         display: "flex",
-        gap: "30px",
+        justifyContent: "space-between", // Distribuye entre izquierda y derecha
         alignItems: "center",
         borderBottom: "2px solid #111827",
       }}
     >
-      {[
-        { to: "/clientes", label: "Clientes" },
-        { to: "/productos", label: "Productos" },
-        { to: "/facturas", label: "Facturas" },
-        { to: "/caja", label: "Caja" },
-        { to: "/caja-diaria", label: "Caja diaria" },
-      ].map((item) => (
-        <Link
-          key={item.to}
-          to={item.to}
-          style={{
-            color: "white",
-            fontSize: "17px",
-            textDecoration: "none",
-            position: "relative",
-            paddingBottom: "3px",
-          }}
-          className="nav-link"
-        >
-          {item.label}
-
-          {/* Subrayado animado */}
-          <span
+      {/* Menú de navegación */}
+      <div style={{ display: "flex", gap: "30px" }}>
+        {navItems.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
             style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              width: 0,
-              height: "2px",
-              background: "#60a5fa",
-              transition: "0.3s",
+              color: "white",
+              fontSize: "17px",
+              textDecoration: "none",
+              position: "relative",
+              paddingBottom: "3px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
-            className="underline"
-          ></span>
-        </Link>
-      ))}
+            className="nav-link"
+          >
+            {item.icon}
+            {item.label}
+            <span
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                width: 0,
+                height: "2px",
+                background: "#60a5fa",
+                transition: "0.3s",
+              }}
+              className="underline"
+            ></span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Texto alineado a la derecha */}
+      <div style={{ color: "white", fontSize: "18px", fontWeight: "bold" }}>
+        Novasoft
+      </div>
     </nav>
   );
 }
+
+
 
