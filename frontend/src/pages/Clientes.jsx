@@ -37,14 +37,15 @@ export default function Clientes() {
 
   return (
     <div style={{ padding: "30px", maxWidth: "1100px", margin: "0 auto" }}>
-      
       {/* CABECERA */}
-      <div style={{ 
-        display: "flex", 
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "25px"
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "25px",
+        }}
+      >
         <h2 style={{ margin: 0, fontSize: "26px" }}>Listado de Clientes</h2>
 
         <Link
@@ -56,7 +57,7 @@ export default function Clientes() {
             borderRadius: "10px",
             textDecoration: "none",
             fontWeight: "bold",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.2)"
+            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
           }}
         >
           ➕ Agregar Cliente
@@ -65,7 +66,9 @@ export default function Clientes() {
 
       {/* TABLA */}
       {clientes.length === 0 ? (
-        <p style={{ fontSize: "16px", opacity: 0.8 }}>No hay clientes cargados.</p>
+        <p style={{ fontSize: "16px", opacity: 0.8 }}>
+          No hay clientes cargados.
+        </p>
       ) : (
         <div
           style={{
@@ -73,7 +76,7 @@ export default function Clientes() {
             background: "white",
             padding: "20px",
             borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
           }}
         >
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -93,10 +96,14 @@ export default function Clientes() {
                   key={c._id}
                   style={{
                     borderBottom: "1px solid #eee",
-                    transition: "background 0.2s"
+                    transition: "background 0.2s",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "#f9fbff")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "#f9fbff")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
                 >
                   <td style={td}>{c.nombre}</td>
                   <td style={td}>{c.cuit}</td>
@@ -113,7 +120,7 @@ export default function Clientes() {
                         padding: "6px 12px",
                         borderRadius: "8px",
                         textDecoration: "none",
-                        fontWeight: "bold"
+                        fontWeight: "bold",
                       }}
                     >
                       ✏️ Editar
@@ -128,19 +135,31 @@ export default function Clientes() {
                         borderRadius: "8px",
                         border: "none",
                         cursor: "pointer",
-                        fontWeight: "bold"
+                        fontWeight: "bold",
                       }}
                     >
                       🗑️ Eliminar
                     </button>
                   </td>
-
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
+      {/* FOOTER */}
+      <footer
+        style={{
+          marginTop: "80px",
+          padding: "20px",
+          textAlign: "center",
+          color: "#888",
+          fontSize: "14px",
+          borderTop: "1px solid #ddd",
+        }}
+      >
+        © Novasoft - Todos los derechos reservados 2025
+      </footer>
     </div>
   );
 }
@@ -148,4 +167,3 @@ export default function Clientes() {
 // estilos de celdas
 const th = { padding: "12px", fontWeight: "bold", color: "#333" };
 const td = { padding: "12px", fontSize: "15px" };
-
