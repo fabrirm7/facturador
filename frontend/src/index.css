@@ -9,6 +9,34 @@ h2 {
   color: #333;
 }
 
+/* ==== Estilos ticket / impresión ==== */
+.ticket-print {
+  /* nada especial acá, sólo para referenciar en @media print */
+}
+
+.no-print {
+  /* elementos que NO se imprimen */
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  /* Ocultar navbar y cosas de la interfaz cuando imprimís */
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  .ticket-print {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ==== Estilos de navbar (hover) ==== */
 .nav-link:hover .underline {
   width: 100%;
 }

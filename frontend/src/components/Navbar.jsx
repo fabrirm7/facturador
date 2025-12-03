@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { FaUsers, FaBoxOpen, FaFileInvoice, FaCashRegister, FaCalendarDay } from "react-icons/fa";
+import {
+  FaUsers,
+  FaBoxOpen,
+  FaFileInvoice,
+  FaCashRegister,
+  FaCalendarDay,
+  FaChartBar,
+  FaCog,
+} from "react-icons/fa";
 
 export default function Navbar() {
   const navItems = [
@@ -8,6 +16,8 @@ export default function Navbar() {
     { to: "/facturas", label: "Facturas", icon: <FaFileInvoice /> },
     { to: "/caja", label: "Caja", icon: <FaCashRegister /> },
     { to: "/caja-diaria", label: "Caja diaria", icon: <FaCalendarDay /> },
+    { to: "/reportes", label: "Reportes", icon: <FaChartBar /> },
+    { to: "/configuracion", label: "Configuración", icon: <FaCog /> },
   ];
 
   return (
@@ -16,7 +26,7 @@ export default function Navbar() {
         background: "#1f2937",
         padding: "15px 25px",
         display: "flex",
-        justifyContent: "space-between", // Distribuye entre izquierda y derecha
+        justifyContent: "space-between",
         alignItems: "center",
         borderBottom: "2px solid #111827",
       }}
@@ -64,6 +74,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
-
-
