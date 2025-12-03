@@ -35,3 +35,12 @@ h2 {
     margin: 0 auto !important;
   }
 }
+
+/* ==== Estilos de navbar (hover) ==== */
+.nav-link:hover .underline {
+  width: 100%;
+}
+
+.nav-link:hover {
+  color: #93c5fd !important;
+}

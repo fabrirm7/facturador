@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api";
-import { toast } from "react-toastify"; // ✅ Importamos Toastify
+import { toast } from "react-toastify";
 
 export default function Productos() {
   const [productos, setProductos] = useState([]);
@@ -10,8 +10,7 @@ export default function Productos() {
     try {
       const res = await api.get("/productos");
       setProductos(res.data);
-    } catch (error) {
-      console.error("Error al obtener productos:", error);
+    } catch {
       toast.error("❌ Error al cargar los productos");
     }
   };
@@ -23,7 +22,6 @@ export default function Productos() {
         toast.success("🗑️ Producto eliminado correctamente");
         obtenerProductos();
       } catch (error) {
-        console.error("Error al eliminar producto:", error);
         if (error.response?.data?.message) {
           toast.error(`❌ ${error.response.data.message}`);
         } else {
@@ -38,72 +36,136 @@ export default function Productos() {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Listado de Productos</h2>
-      <Link
-        to="/productos/nuevo"
+    <div style={{ padding: "30px", maxWidth: "1100px", margin: "0 auto" }}>
+      {/* CABECERA */}
+      <div
         style={{
-          color: "white",
-          background: "#282c34",
-          padding: "6px 10px",
-          textDecoration: "none",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "25px",
         }}
       >
-        ➕ Agregar Producto
-      </Link>
+        <h2 style={{ margin: 0, fontSize: "26px" }}>Listado de Productos</h2>
 
-      {productos.length === 0 ? (
-        <p>No hay productos cargados.</p>
-      ) : (
-        <table
+        <Link
+          to="/productos/nuevo"
           style={{
-            width: "100%",
-            marginTop: "15px",
-            borderCollapse: "collapse",
+            background: "#0d6efd",
+            color: "white",
+            padding: "10px 18px",
+            borderRadius: "10px",
+            textDecoration: "none",
+            fontWeight: "bold",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
           }}
         >
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Código</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Categoría</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productos.map((p) => (
-              <tr key={p._id}>
-                <td>{p.nombre}</td>
-                <td>{p.codigo}</td>
-                <td>${p.precio}</td>
-                <td>{p.stock}</td>
-                <td>{p.categoria}</td>
-                <td>
-                  <Link
-                    to={`/productos/editar/${p._id}`}
-                    style={{ marginRight: "10px" }}
-                  >
-                    ✏️ Editar
-                  </Link>
-                  <button
-                    onClick={() => eliminarProducto(p._id)}
-                    style={{
-                      background: "red",
-                      color: "white",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    🗑️ Eliminar
-                  </button>
-                </td>
+          ➕ Agregar Producto
+        </Link>
+      </div>
+
+      {/* TABLA */}
+      {productos.length === 0 ? (
+        <p style={{ fontSize: "16px", opacity: 0.8 }}>
+          No hay productos cargados.
+        </p>
+      ) : (
+        <div
+          style={{
+            overflowX: "auto",
+            background: "white",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          }}
+        >
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "#f5f7fa", textAlign: "left" }}>
+                <th style={th}>Nombre</th>
+                <th style={th}>Código</th>
+                <th style={th}>Precio</th>
+                <th style={th}>Stock</th>
+                <th style={th}>Categoría</th>
+                <th style={th}>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {productos.map((p) => (
+                <tr
+                  key={p._id}
+                  style={{
+                    borderBottom: "1px solid #eee",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "#f9fbff")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
+                >
+                  <td style={td}>{p.nombre}</td>
+                  <td style={td}>{p.codigo}</td>
+                  <td style={td}>${p.precio}</td>
+                  <td style={td}>{p.stock}</td>
+                  <td style={td}>{p.categoria}</td>
+
+                  <td style={td}>
+                    <Link
+                      to={`/productos/editar/${p._id}`}
+                      style={{
+                        marginRight: "10px",
+                        background: "#ffc107",
+                        color: "black",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        textDecoration: "none",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      ✏️ Editar
+                    </Link>
+
+                    <button
+                      onClick={() => eliminarProducto(p._id)}
+                      style={{
+                        background: "#dc3545",
+                        color: "white",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        border: "none",
+                        cursor: "pointer",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+      {/* FOOTER */}
+      <footer
+        style={{
+          marginTop: "80px",
+          padding: "20px",
+          textAlign: "center",
+          color: "#888",
+          fontSize: "14px",
+          borderTop: "1px solid #ddd",
+        }}
+      >
+        © Novasoft - Todos los derechos reservados 2025
+      </footer>
     </div>
   );
 }
+
+// estilos de tabla
+const th = { padding: "12px", fontWeight: "bold", color: "#333" };
+const td = { padding: "12px", fontSize: "15px" };
